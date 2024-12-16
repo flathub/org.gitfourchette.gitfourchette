@@ -1,9 +1,9 @@
 app-id: org.gitfourchette.gitfourchette
 runtime: org.kde.Platform
-runtime-version: '6.7'  # PyQt.BaseApp doesn't support 6.8 yet (https://github.com/flathub/com.riverbankcomputing.PyQt.BaseApp#branch-comparison)
+runtime-version: '6.8'
 sdk: org.kde.Sdk
 base: com.riverbankcomputing.PyQt.BaseApp
-base-version: '6.7'
+base-version: '6.8'
 cleanup-commands:
  - /app/cleanup-BaseApp.sh
 build-options:
@@ -39,11 +39,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        #######################################################################
-        ## TODO: Replace "commit: ..." with "tag: v1.0.1" when the next tag is created upstream.
-        ##       Can't use tag 'v1.0.0' because AppStream files were fixed in a later commit.
-        #######################################################################
-        commit: c3bd14e007eaecc97dcf6cc7f2efa8edc2dfce01
+        tag: v1.0.2
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$

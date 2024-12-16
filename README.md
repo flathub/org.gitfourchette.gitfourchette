@@ -34,8 +34,8 @@ flatpak-builder -v --install-deps-from=flathub --user --install --force-clean bu
     - You can obtain `pipdeptree` from `pip`.
 
 6. Regenerate [python3-packages.yml](./python3-packages.yml):
-    - `req2flatpak --yaml --requirements pygit2==1.16.0 cffi==1.17.1 pycparser==2.22 -t 311-aarch64 311-x86_64 > python3-packages.yml`
-    - Replace Python version number `311` with the Python version from the runtime (step 3).
+    - `req2flatpak --yaml --requirements pygit2==1.16.0 cffi==1.17.1 pycparser==2.22 -t 312-aarch64 312-x86_64 > python3-packages.yml`
+    - Replace Python version number `312` with the Python version from the runtime (step 3).
     - Replace the package versions with what you noted in step 5.
     - You can obtain `req2flatpak` from `pip`.
 
