@@ -35,11 +35,11 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6]' --no-build-isolation
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]' --no-build-isolation
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        tag: v1.0.2
+        tag: v1.1.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
