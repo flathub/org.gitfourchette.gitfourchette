@@ -27,16 +27,16 @@ flatpak-builder -v --install-deps-from=flathub --user --install --force-clean bu
 3. Note the Python version that is included in the runtime:
     - `flatpak run --command=python3 org.kde.Sdk --version`
 
-4. Install `pygit2` on your machine (e.g. via `pip`) so we can get the latest Python dependencies.
+4. Collect the latest version numbers of the dependencies:
+   - `virtualenv venv`
+   - `source venv/bin/activate`
+   - `pip install pipdeptree req2flatpak gitfourchette[pygments]@git+https://github.com/jorio/gitfourchette`
+   - `pipdeptree -p gitfourchette`
+   - In pipdeptree's output, note the installed versions of packages `pygments`, `pygit2`, `cffi`, `pycparser`.
 
-5. Run `pipdeptree -p pygit2` and note the versions of the Python dependencies.
-    - We're just interested in `pygit2`, `cffi`, and `pycparser`.
-    - You can obtain `pipdeptree` from `pip`.
-
-6. Regenerate [python3-packages.yml](./python3-packages.yml):
-    - `req2flatpak --yaml --requirements pygit2==1.16.0 cffi==1.17.1 pycparser==2.22 -t 312-aarch64 312-x86_64 > python3-packages.yml`
+5. Regenerate [python3-packages.yml](./python3-packages.yml):
+    - `req2flatpak --yaml --requirements pygments==2.18.0 pygit2==1.16.0 cffi==1.17.1 pycparser==2.22 -t 312-aarch64 312-x86_64 > python3-packages.yml`
     - Replace Python version number `312` with the Python version from the runtime (step 3).
-    - Replace the package versions with what you noted in step 5.
-    - You can obtain `req2flatpak` from `pip`.
+    - Replace the package versions with what you noted in step 4.
 
-7. You can now rebuild the Flatpak.
+6. You can now rebuild the Flatpak.
