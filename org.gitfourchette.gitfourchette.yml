@@ -5,7 +5,7 @@ sdk: org.kde.Sdk
 base: com.riverbankcomputing.PyQt.BaseApp
 base-version: '6.8'
 cleanup-commands:
- - /app/cleanup-BaseApp.sh
+  - /app/cleanup-BaseApp.sh
 build-options:
   env:
     - BASEAPP_REMOVE_WEBENGINE=1
@@ -35,14 +35,16 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]' --no-build-isolation
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]'
+        --no-build-isolation
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        tag: v1.1.0
+        tag: v1.1.1
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
+        commit: 1276d5aa252eb64e3e336c36308e7e808073c1d9
     post-install:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
