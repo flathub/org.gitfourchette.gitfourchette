@@ -12,8 +12,24 @@ flatpak install org.gitfourchette.gitfourchette
 
 ### Build the Flatpak locally
 
+Build and install the Flatpak locally (per [official instructions](https://docs.flathub.org/docs/for-app-authors/submission#build-and-install)):
 ```sh
-flatpak-builder -v --install-deps-from=flathub --user --install --force-clean build org.gitfourchette.gitfourchette.yml
+flatpak run org.flatpak.Builder \
+    --force-clean \
+    --sandbox \
+    --user \
+    --install \
+    --install-deps-from=flathub \
+    --ccache \
+    --mirror-screenshots-url=https://dl.flathub.org/media/ \
+    --repo=repo \
+    build \
+    org.gitfourchette.gitfourchette.yml
+```
+
+Then [run the linter](https://docs.flathub.org/docs/for-app-authors/submission#run-the-linter) to make sure any new markup in the metainfo file is correct (e.g. in the changelog):
+```sh
+flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 ```
 
 ### How to update the dependencies
@@ -30,13 +46,13 @@ flatpak-builder -v --install-deps-from=flathub --user --install --force-clean bu
 4. Collect the latest version numbers of the dependencies:
    - `virtualenv venv`
    - `source venv/bin/activate`
-   - `pip install --ignore-installed pipdeptree req2flatpak gitfourchette[pygments]@git+https://github.com/jorio/gitfourchette`
+   - `pip install --ignore-installed pipdeptree req2flatpak setuptools pyyaml gitfourchette[pygments]@git+https://github.com/jorio/gitfourchette`
    - `pipdeptree -p gitfourchette`
    - In pipdeptree's output, note the installed versions of packages `pygments`, `pygit2`, `cffi`, `pycparser`.
 
 5. Regenerate [python3-packages.yml](./python3-packages.yml):
     - In the command below, replace Python version number `312` with the Python version from the runtime (step 3), and replace the package versions with what you noted in step 4:
-    - `req2flatpak --yaml --requirements pygments==2.19.1 pygit2==1.17.0 cffi==1.17.1 pycparser==2.22 -t 312-aarch64 312-x86_64 > python3-packages.yml`
+    - `req2flatpak --yaml --requirements pygments==2.19.1 pygit2==1.18.0 cffi==1.17.1 pycparser==2.22 -t 312-aarch64 312-x86_64 > python3-packages.yml`
     - In `python3-packages.yml`, make sure to restore the `--ignore-installed` argument, otherwise Pygments won't be built into the Flatpak!
 
 6. You can now rebuild the Flatpak.
