@@ -35,7 +35,8 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]' --no-build-isolation
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]'
+        --no-build-isolation
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
@@ -44,6 +45,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
+        tag: v1.4.0
     post-install:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
