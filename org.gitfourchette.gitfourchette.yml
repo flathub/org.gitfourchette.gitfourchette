@@ -5,7 +5,7 @@ sdk: org.kde.Sdk
 base: com.riverbankcomputing.PyQt.BaseApp
 base-version: '6.9'
 cleanup-commands:
- - /app/cleanup-BaseApp.sh
+  - /app/cleanup-BaseApp.sh
 build-options:
   env:
     - BASEAPP_REMOVE_WEBENGINE=1
@@ -39,8 +39,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: 4a24e06dc38e8c4253a1d18215b6cb581cecfd4e
-        # tag: v1.3.0
+        commit: dadf2cd8c38c159e659adb640edb7b0c70d4b047
+        # tag: v1.4.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
