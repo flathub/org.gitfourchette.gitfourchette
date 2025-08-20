@@ -27,6 +27,10 @@ finish-args:
   - --talk-name=org.freedesktop.Flatpak
   # Don't mix .pyc files with host environment
   - --env=PYTHONPYCACHEPREFIX=
+  # Tell built-in git where to find its libraries and assets
+  # (this isn't forwarded to non-sandboxed git)
+  - --env=GIT_EXEC_PATH=/app/lib/libexec/git-core
+  - --env=GIT_CONFIG_SYSTEM=/app/sandboxed-gitconfig
 
 modules:
   - python3-packages.yml
@@ -48,3 +52,16 @@ modules:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.metainfo.xml ${FLATPAK_DEST}/share/metainfo/org.gitfourchette.gitfourchette.metainfo.xml
+
+  - name: git
+    buildsystem: simple
+    build-commands:
+      # Copy git from SDK
+      - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack} ${FLATPAK_DEST}/bin
+      - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/lib/libexec
+      - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
+      # Install gitconfig for built-in git
+      - install -D --mode=644 ./sandboxed-gitconfig ${FLATPAK_DEST}
+    sources:
+      - type: file
+        path: sandboxed-gitconfig
