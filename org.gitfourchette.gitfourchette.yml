@@ -62,6 +62,10 @@ modules:
       - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
       # Install gitconfig for built-in git
       - install -D --mode=644 ./sandboxed-gitconfig ${FLATPAK_DEST}
+      # Run gpg on host
+      - install -D --mode=755 ./gpg-on-host.sh ${FLATPAK_DEST}/bin
     sources:
       - type: file
         path: sandboxed-gitconfig
+      - type: file
+        path: gpg-on-host.sh
