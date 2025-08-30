@@ -19,6 +19,8 @@ finish-args:
   - --share=ipc
   # Talk to git remotes
   - --share=network
+  # Use host's ssh-agent (SSH_AUTH_SOCK)
+  - --socket=ssh-auth
   # Discover ".git" dir associated with files dropped by the user
   - --filesystem=host:rw
   # Open directories in system file manager via DBus
