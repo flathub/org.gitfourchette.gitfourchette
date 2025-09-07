@@ -45,8 +45,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: dadf2cd8c38c159e659adb640edb7b0c70d4b047
-        # tag: v1.4.0
+        commit: 9476faac35019e47c725f87056f95cb4f61eab7b
+        # tag: v1.5.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
