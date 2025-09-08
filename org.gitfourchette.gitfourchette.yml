@@ -19,6 +19,8 @@ finish-args:
   - --share=ipc
   # Talk to git remotes
   - --share=network
+  # Use host's ssh-agent (SSH_AUTH_SOCK)
+  - --socket=ssh-auth
   # Discover ".git" dir associated with files dropped by the user
   - --filesystem=host:rw
   # Open directories in system file manager via DBus
@@ -27,6 +29,10 @@ finish-args:
   - --talk-name=org.freedesktop.Flatpak
   # Don't mix .pyc files with host environment
   - --env=PYTHONPYCACHEPREFIX=
+  # Tell built-in git where to find its libraries and assets
+  # (this isn't forwarded to non-sandboxed git)
+  - --env=GIT_EXEC_PATH=/app/lib/libexec/git-core
+  - --env=GIT_CONFIG_SYSTEM=/app/sandboxed-gitconfig
 
 modules:
   - python3-packages.yml
@@ -39,8 +45,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: dadf2cd8c38c159e659adb640edb7b0c70d4b047
-        # tag: v1.4.0
+        commit: 07a57f0df22b9498133ae0e0c5ef41fdea2a2fc0
+        # tag: v1.5.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
@@ -48,3 +54,20 @@ modules:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.metainfo.xml ${FLATPAK_DEST}/share/metainfo/org.gitfourchette.gitfourchette.metainfo.xml
+
+  - name: git
+    buildsystem: simple
+    build-commands:
+      # Copy git from SDK
+      - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack} ${FLATPAK_DEST}/bin
+      - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/lib/libexec
+      - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
+      # Install gitconfig for built-in git
+      - install -D --mode=644 ./sandboxed-gitconfig ${FLATPAK_DEST}
+      # Run gpg on host
+      - install -D --mode=755 ./gpg-on-host.sh ${FLATPAK_DEST}/bin
+    sources:
+      - type: file
+        path: sandboxed-gitconfig
+      - type: file
+        path: gpg-on-host.sh

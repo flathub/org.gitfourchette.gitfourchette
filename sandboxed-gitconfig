@@ -1,0 +1,12 @@
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[init]
+	templateDir = /app/share/git-core/templates
+
+# Run gpg on host
+[gpg]
+	program = /app/bin/gpg-on-host.sh
