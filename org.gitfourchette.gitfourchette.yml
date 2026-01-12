@@ -33,6 +33,8 @@ finish-args:
   # (this isn't forwarded to non-sandboxed git)
   - --env=GIT_EXEC_PATH=/app/libexec/git-core
   - --env=GIT_CONFIG_SYSTEM=/app/sandboxed-gitconfig
+  # Allow mounting commits with FUSE (we need /dev/fuse)
+  - --device=all
 
 modules:
   - python3-packages.yml
@@ -72,3 +74,23 @@ modules:
         path: files/sandboxed-gitconfig
       - type: file
         path: files/gpg-on-host.sh
+
+  - name: libfuse
+    buildsystem: meson
+    config-opts:
+      - -Dexamples=false
+      - -Duseroot=false
+      - -Dtests=false
+      - -Dudevrulesdir=/tmp/
+      - -Dinitscriptdir=
+    sources:
+      - type: archive
+        url: https://github.com/libfuse/libfuse/releases/download/fuse-3.18.1/fuse-3.18.1.tar.gz
+        sha256: dd395c88f29c7540bbdd0b830260ab8092ccb241bb6e66f603643f715fb9322c
+      - type: file
+        path: files/fusermount3-wrapper.sh
+      - type: file
+        path: files/umount-wrapper.sh
+    post-install:
+      - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/fusermount3-wrapper.sh ${FLATPAK_DEST}/bin/fusermount3
+      - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/umount-wrapper.sh ${FLATPAK_DEST}/bin/umount
