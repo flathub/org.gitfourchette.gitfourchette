@@ -69,6 +69,6 @@ modules:
       - install -D --mode=755 ./gpg-on-host.sh ${FLATPAK_DEST}/bin
     sources:
       - type: file
-        path: sandboxed-gitconfig
+        path: files/sandboxed-gitconfig
       - type: file
-        path: gpg-on-host.sh
+        path: files/gpg-on-host.sh
