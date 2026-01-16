@@ -31,7 +31,7 @@ finish-args:
   - --env=PYTHONPYCACHEPREFIX=
   # Tell built-in git where to find its libraries and assets
   # (this isn't forwarded to non-sandboxed git)
-  - --env=GIT_EXEC_PATH=/app/lib/libexec/git-core
+  - --env=GIT_EXEC_PATH=/app/libexec/git-core
   - --env=GIT_CONFIG_SYSTEM=/app/sandboxed-gitconfig
 
 modules:
@@ -59,8 +59,9 @@ modules:
     buildsystem: simple
     build-commands:
       # Copy git from SDK
+      - mkdir ${FLATPAK_DEST}/libexec
       - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack} ${FLATPAK_DEST}/bin
-      - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/lib/libexec
+      - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/libexec
       - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
       # Install gitconfig for built-in git
       - install -D --mode=644 ./sandboxed-gitconfig ${FLATPAK_DEST}
