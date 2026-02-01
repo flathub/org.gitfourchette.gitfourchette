@@ -33,6 +33,8 @@ finish-args:
   # (this isn't forwarded to non-sandboxed git)
   - --env=GIT_EXEC_PATH=/app/libexec/git-core
   - --env=GIT_CONFIG_SYSTEM=/app/sandboxed-gitconfig
+  # Allow mounting commits with FUSE (we need /dev/fuse)
+  - --device=all
 
 modules:
   - python3-packages.yml
@@ -41,12 +43,12 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments]' --no-build-isolation
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments,mfusepy]' --no-build-isolation
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: 07a57f0df22b9498133ae0e0c5ef41fdea2a2fc0
-        # tag: v1.5.0
+        commit: 7293dc4e86cdb9eac690caba28b862210f34f2fb
+        # tag: v1.6.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
@@ -69,6 +71,26 @@ modules:
       - install -D --mode=755 ./gpg-on-host.sh ${FLATPAK_DEST}/bin
     sources:
       - type: file
-        path: sandboxed-gitconfig
+        path: files/sandboxed-gitconfig
       - type: file
-        path: gpg-on-host.sh
+        path: files/gpg-on-host.sh
+
+  - name: libfuse
+    buildsystem: meson
+    config-opts:
+      - -Dexamples=false
+      - -Duseroot=false
+      - -Dtests=false
+      - -Dudevrulesdir=/tmp/
+      - -Dinitscriptdir=
+    sources:
+      - type: archive
+        url: https://github.com/libfuse/libfuse/releases/download/fuse-3.18.1/fuse-3.18.1.tar.gz
+        sha256: dd395c88f29c7540bbdd0b830260ab8092ccb241bb6e66f603643f715fb9322c
+      - type: file
+        path: files/fusermount3-wrapper.sh
+      - type: file
+        path: files/umount-wrapper.sh
+    post-install:
+      - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/fusermount3-wrapper.sh ${FLATPAK_DEST}/bin/fusermount3
+      - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/umount-wrapper.sh ${FLATPAK_DEST}/bin/umount
