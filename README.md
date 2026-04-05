@@ -14,7 +14,7 @@ flatpak install org.gitfourchette.gitfourchette
 
 Build and install the Flatpak locally (per [official instructions](https://docs.flathub.org/docs/for-app-authors/submission#build-and-install)):
 ```sh
-flatpak run --command=flathub-build org.flatpak.Builder org.gitfourchette.gitfourchette.yml
+flatpak run --command=flathub-build org.flatpak.Builder --install org.gitfourchette.gitfourchette.yml
 ```
 
 Then [run the linter](https://docs.flathub.org/docs/for-app-authors/submission#run-the-linter) to make sure any new markup in the metainfo file is correct (e.g. in the changelog):
@@ -47,3 +47,15 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
     - In `python3-packages.yml`, make sure to restore the `--ignore-installed` argument, otherwise Pygments won't be built into the Flatpak!
 
 6. You can now rebuild the Flatpak.
+
+### Run unit tests as Flatpak
+
+Once you've installed the Flatpak, you can run the test suite in the Flatpak's environment. In a clone of GitFourchette's source repository, run:
+
+```sh
+./pkg/flatpak/test_as_flatpak.sh --with-fuse --with-network
+```
+
+This piggybacks on the Flatpak's environment and all its constraints, but runs source code from your separate repository. This lets you iterate on the code without rebuilding the Flatpak.
+
+The script prepares a virtualenv and caches dependencies in *~/.var/app/org.gitfourchette.gitfourchette/cache/\_\_TEST_IN_FLATPAK_VENV\_\_*. The dependencies are not updated on subsequent runs if this directory exists. If you want to run the unit tests with fresh dependencies, delete this folder.
