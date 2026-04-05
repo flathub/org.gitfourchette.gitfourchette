@@ -43,7 +43,7 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 
 5. Regenerate [python3-packages.yml](./python3-packages.yml):
     - In the command below, replace Python version number `313` with the Python version from the runtime (step 3), and replace the package versions with what you noted in step 4:
-    - `req2flatpak --yaml --requirements pygments==2.19.2 pygit2==1.19.1 cffi==2.0.0 pycparser==2.23 mfusepy==3.1.0 -t 313-aarch64 313-x86_64 > python3-packages.yml`
+    - `req2flatpak --yaml --requirements pygments==2.20.0 pygit2==1.19.2 cffi==2.0.0 pycparser==3.0 mfusepy==3.1.1 -t 313-aarch64 313-x86_64 > python3-packages.yml`
     - In `python3-packages.yml`, make sure to restore the `--ignore-installed` argument, otherwise Pygments won't be built into the Flatpak!
 
 6. You can now rebuild the Flatpak.
