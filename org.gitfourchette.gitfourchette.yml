@@ -43,15 +43,17 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments,mfusepy]' --no-build-isolation
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments,mfusepy]'
+        --no-build-isolation
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: 7293dc4e86cdb9eac690caba28b862210f34f2fb
+        commit: 5646c42672c6cb48c0f1ec329765859e3efaedcd
         # tag: v1.6.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
+        tag: v1.7.0
     post-install:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
@@ -62,7 +64,8 @@ modules:
     build-commands:
       # Copy git from SDK
       - mkdir ${FLATPAK_DEST}/libexec
-      - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack} ${FLATPAK_DEST}/bin
+      - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack}
+        ${FLATPAK_DEST}/bin
       - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/libexec
       - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
       # Install gitconfig for built-in git
