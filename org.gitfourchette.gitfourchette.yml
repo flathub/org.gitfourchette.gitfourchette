@@ -48,12 +48,11 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: a5db05e21cdfbb4e123c00d829c47b1a0d22894f
-        # tag: v1.7.1
+        commit: 2ff08f7d41b7be0f6eca5210e41130113de6f034
+        tag: v1.9.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
-        tag: v1.8.0
     post-install:
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.desktop      ${FLATPAK_DEST}/share/applications/org.gitfourchette.gitfourchette.desktop
       - install -D ./pkg/flatpak/org.gitfourchette.gitfourchette.png          ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/org.gitfourchette.gitfourchette.png
