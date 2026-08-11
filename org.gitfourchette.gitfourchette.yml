@@ -95,3 +95,15 @@ modules:
     post-install:
       - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/fusermount3-wrapper.sh ${FLATPAK_DEST}/bin/fusermount3
       - install -D --mode=755 ${FLATPAK_BUILDER_BUILDDIR}/umount-wrapper.sh ${FLATPAK_DEST}/bin/umount
+
+  # Better-looking client-side decorations on GNOME+Wayland
+  - name: qadwaitadecorations
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_INSTALL_PREFIX=/app/lib/plugins
+      - -DQT_PLUGINS_DIR=/app/lib/plugins
+      - -DUSE_QT6=ON
+    sources:
+      - type: git
+        url: https://github.com/FedoraQt/QAdwaitaDecorations.git
+        commit: 440d4b00ad388be93c2da04b4f316d847c77d6bd
