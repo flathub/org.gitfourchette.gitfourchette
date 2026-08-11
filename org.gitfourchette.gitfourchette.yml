@@ -43,7 +43,7 @@ modules:
     buildsystem: simple
     build-commands:
       - python update_resources.py --freeze pyqt6
-      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,pygments,mfusepy]'
+      - python -m pip install --verbose --no-index --prefix=${FLATPAK_DEST} '.[pyqt6,mfusepy]'
         --no-build-isolation
     sources:
       - type: git
