@@ -48,8 +48,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/jorio/gitfourchette.git
-        commit: 9c30540d330e114f65493f89ee26db8b5a6c854d
-        tag: v1.11.0
+        commit: 4481dc10827971303ea2d419df60e50086767a2d
+        tag: v1.12.0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
@@ -87,8 +87,8 @@ modules:
       - -Dinitscriptdir=
     sources:
       - type: archive
-        url: https://github.com/libfuse/libfuse/releases/download/fuse-3.18.2/fuse-3.18.2.tar.gz
-        sha256: f01de85717e20adf5f98aff324acd85dd73d61a5ca3834d573dcf0bd6e54a298
+        url: https://github.com/libfuse/libfuse/releases/download/fuse-3.18.3/fuse-3.18.3.tar.gz
+        sha256: bcd19582c5e30f7fe45dd86a5540e998590aa01903afc7ebcbeea6c8ac5421ee
       - type: file
         path: files/fusermount3-wrapper.sh
       - type: file

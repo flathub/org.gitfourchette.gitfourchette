@@ -23,6 +23,11 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest org.gitf
 flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 ```
 
+Optionally, export the Flatpak (to test on other machines):
+```sh
+flatpak build-bundle repo gitfourchette.flatpak org.gitfourchette.gitfourchette
+```
+
 ### How to update the dependencies
 
 1. Install the KDE Flatpak SDK corresponding to the newest runtime supported by PyQt.BaseApp.
@@ -37,13 +42,13 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 4. Collect the latest version numbers of the dependencies:
    - `virtualenv venv`
    - `source venv/bin/activate`
-   - `pip install --ignore-installed pipdeptree req2flatpak setuptools pyyaml gitfourchette[pygments,mfusepy]@git+https://github.com/jorio/gitfourchette`
+   - `pip install --ignore-installed pipdeptree req2flatpak[yaml]@git+https://github.com/johannesjh/req2flatpak gitfourchette[pygments,mfusepy]@git+https://github.com/jorio/gitfourchette`
    - `pipdeptree -p gitfourchette`
    - In pipdeptree's output, note the installed versions of packages `pygments`, `pygit2`, `mfusepy`, `cffi`, `pycparser`.
 
 5. Regenerate [python3-packages.yml](./python3-packages.yml):
     - In the command below, replace Python version number `313` with the Python version from the runtime (step 3), and replace the package versions with what you noted in step 4:
-    - `req2flatpak --yaml --requirements pygments==2.21.0 pygit2==1.20.0 cffi==2.1.1 pycparser==3.0 mfusepy==3.1.1 -t 313-aarch64 313-x86_64 > python3-packages.yml`
+    - `req2flatpak --yaml --requirements pygments==2.21.0 pygit2==1.20.1 cffi==2.1.1 pycparser==3.11 mfusepy==3.1.1 -t 313-aarch64 313-x86_64 > python3-packages.yml`
     - In `python3-packages.yml`, make sure to restore the `--ignore-installed` argument, otherwise Pygments won't be built into the Flatpak!
 
 6. You can now rebuild the Flatpak.
