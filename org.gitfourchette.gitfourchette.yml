@@ -6,6 +6,52 @@ base: com.riverbankcomputing.PyQt.BaseApp
 base-version: '6.11'
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
+  # PyQt6 modules the app doesn't import.
+  # Keep this list in sync with the PyQt6 imports in gitfourchette/qt.py.
+  - >-
+    cd /app/lib/python3*/site-packages/PyQt6 &&
+    for f in Qt*.abi3.so; do case "${f%%.*}" in QtCore|QtDBus|QtGui|QtNetwork|QtSvg|QtTest|QtWidgets) ;; *) rm -fv "$f" ;; esac; done &&
+    rm -rfv lupdate uic
+  # Qt PDF only previews PDFs in diffs, which now show as binary files. Also QML and SBOM leftovers.
+  - rm -rfv /app/lib/libQt6Pdf* /app/lib/*-linux-gnu/libQt6Pdf* /app/lib/plugins/imageformats/libqpdf.so /app/lib/plugins/PyQt6 /app/lib/qml /app/lib/sbom
+  # Python packages the BaseApp keeps for apps that need them, and metadata its cleanup misses
+  - >-
+    cd /app/lib/python3*/site-packages &&
+    rm -rfv ply ply-*.dist-info pyparsing pyparsing-*.dist-info pyproject_hooks pyproject_hooks-*.dist-info
+    tomli tomli-*.dist-info typing_extensions.py typing_extensions-*.dist-info __pycache__/typing_extensions.*
+    pyqt_builder-*.dist-info pyqt6_webengine-*.dist-info
+  # Scripts left behind by packages that cleanup-BaseApp.sh removes
+  - rm -fv /app/bin/setuptools-scm /app/bin/vcs-versioning
+
+# Files from our modules that aren't needed at run time
+cleanup:
+  - /bin/cffi-gen-src
+  - /bin/pygmentize
+  # pygit2 needs only _cffi_backend at run time
+  - /lib/python3*/site-packages/cffi
+  - /lib/python3*/site-packages/cffi-*.dist-info
+  - /lib/python3*/site-packages/pycparser
+  - /lib/python3*/site-packages/pycparser-*.dist-info
+  # pygit2 files for building and type checking
+  - /lib/python3*/site-packages/pygit2/decl
+  - /lib/python3*/site-packages/pygit2/*.pyi
+  - /lib/python3*/site-packages/pygit2/_run.py
+  - /lib/python3*/site-packages/pygit2/__pycache__/_run.*
+  # Pygments: we only use lexers and styles
+  - /lib/python3*/site-packages/pygments/formatters
+  - /lib/python3*/site-packages/pygments/formatter.py
+  - /lib/python3*/site-packages/pygments/cmdline.py
+  - /lib/python3*/site-packages/pygments/sphinxext.py
+  - /lib/python3*/site-packages/pygments/__main__.py
+  - /lib/python3*/site-packages/pygments/__pycache__/formatter.*
+  - /lib/python3*/site-packages/pygments/__pycache__/cmdline.*
+  - /lib/python3*/site-packages/pygments/__pycache__/sphinxext.*
+  - /lib/python3*/site-packages/pygments/__pycache__/__main__.*
+  # Source files that end up in the wheel despite exclude-package-data
+  - /lib/python3*/site-packages/gitfourchette/assets/lang/*.po
+  - /lib/python3*/site-packages/gitfourchette/assets/lang/*.pot
+  - /lib/python3*/site-packages/gitfourchette/forms/*.ui
+  - /lib/python3*/site-packages/gitfourchette/assets/lang/README.md
 build-options:
   env:
     - BASEAPP_REMOVE_WEBENGINE=1
@@ -63,14 +109,23 @@ modules:
     build-commands:
       # Copy git from SDK
       - mkdir ${FLATPAK_DEST}/libexec
-      - cp -av /usr/bin/git{,-cvsserver,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack}
+      - cp -av /usr/bin/git{,-lfs,-receive-pack,-shell,-upload-archive,-upload-pack}
         ${FLATPAK_DEST}/bin
       - cp -arv /usr/libexec/git-core ${FLATPAK_DEST}/libexec
-      - cp -arv /usr/share/git{-core,web} ${FLATPAK_DEST}/share
+      - cp -arv /usr/share/git-core ${FLATPAK_DEST}/share
       # Install gitconfig for built-in git
       - install -D --mode=644 ./sandboxed-gitconfig ${FLATPAK_DEST}
       # Run gpg on host
       - install -D --mode=755 ./gpg-on-host.sh ${FLATPAK_DEST}/bin
+    # Commands that need Perl, which the runtime doesn't have
+    cleanup:
+      - /libexec/git-core/git-archimport
+      - /libexec/git-core/git-cvsexportcommit
+      - /libexec/git-core/git-cvsimport
+      - /libexec/git-core/git-cvsserver
+      - /libexec/git-core/git-instaweb
+      - /libexec/git-core/git-send-email
+      - /libexec/git-core/git-svn
     sources:
       - type: file
         path: files/sandboxed-gitconfig
@@ -81,10 +136,9 @@ modules:
     buildsystem: meson
     config-opts:
       - -Dexamples=false
-      - -Duseroot=false
       - -Dtests=false
-      - -Dudevrulesdir=/tmp/
-      - -Dinitscriptdir=
+      # Helper programs aren't needed: we install our own fusermount3 wrapper
+      - -Dutils=false
     sources:
       - type: archive
         url: https://github.com/libfuse/libfuse/releases/download/fuse-3.18.3/fuse-3.18.3.tar.gz
