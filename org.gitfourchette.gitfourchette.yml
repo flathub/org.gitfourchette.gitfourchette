@@ -13,7 +13,6 @@ build-options:
 command: gitfourchette
 
 finish-args:
-  - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
   - --socket=wayland
   - --socket=fallback-x11
   - --share=ipc
